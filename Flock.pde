@@ -69,12 +69,12 @@ void createGUI() {
   
   Slider sliderRanSep = jControl.addSlider("Range_Separation", 0, 100, 10, 10, 40, 200, 20);
   Slider sliderRanAli = jControl.addSlider("Range_Alignment", 0, 100, 40, 10, 70, 200, 20);
-  Slider sliderMagCoh = jControl.addSlider("Magnitude_Cohesion", 0, 10, .5, 10, 100, 200, 20);
-  Slider sliderMagSep = jControl.addSlider("Magnitude_Separation", 0, 10, 4, 10, 130, 200, 20);
-  Slider sliderMagAli = jControl.addSlider("Magnitude_Alignment", 0, 10, 4, 10, 160, 200, 20);
+  Slider sliderMagCoh = jControl.addSlider("Magnitude_Cohesion", 0, 10, .5, 320, 10, 200, 20);
+  Slider sliderMagSep = jControl.addSlider("Magnitude_Separation", 0, 10, 4, 320, 40, 200, 20);
+  Slider sliderMagAli = jControl.addSlider("Magnitude_Alignment", 0, 10, 4, 320, 70, 200, 20);
   
-  Slider sliderMaxA = jControl.addSlider("Max_Acceleration", 0, 10, 5, 10, 190, 200, 20);
-  Slider sliderMaxV = jControl.addSlider("Max_Velocity", 0, 10, 3, 10, 220, 200, 20);
+  Slider sliderMaxA = jControl.addSlider("Max_Acceleration", 0, 10, 5, 10, 120, 200, 20);
+  Slider sliderMaxV = jControl.addSlider("Max_Velocity", 0, 10, 3, 10, 150, 200, 20);
   
 }
 
@@ -126,16 +126,15 @@ class Boid {
     ali  = PVector.mult(alignment(
       getNeighbors(boids, Range_Alignment)
       ), Magnitude_Alignment);
+    
     // combine accelerations
     PVector randomizeV = new PVector(random(-1 * randV, randV), random(-1 * randV, randV));
     a = PVector.add(coh, PVector.add(sep, ali));
     a = PVector.add(a, randomizeV);
     // clamp accelerations
     a.set(clampV(a.x, Max_Acceleration), clampV(a.y, Max_Acceleration));
+    
     // get vectors
-    //PVector randomizeV = new PVector(random(-1 * randV, randV), random(-1 * randV, randV));
-    // add the random vector factor
-    //v = PVector.add(a, PVector.add(v, randomizeV));
     v = PVector.add(a, v);
     // clamp velocity
     v.set(clampV(v.x, Max_Velocity), clampV(v.y, Max_Velocity));
@@ -143,7 +142,7 @@ class Boid {
     // update position
     pos = PVector.add(pos, v);
 
-    // make sure boid is in the boundary
+    // make sure boid stays in the boundary
     pos.set(
       wrapAroundFloat(pos.x, 0, width), 
       wrapAroundFloat(pos.y, 0, height)
