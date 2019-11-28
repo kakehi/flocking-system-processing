@@ -7,10 +7,10 @@ Slider sliderRanCoh, sliderRanSep, sliderRanAli, sliderMagCoh, sliderMagSep, sli
 
 float Range_Cohesion, Range_Separation, Range_Alignment;
 float Magnitude_Cohesion, Magnitude_Separation, Magnitude_Alignment;
-float boidCount = 300;
+float boidCount = 200;
 
 float randV = 6.0f; // the force each tries to go random
-float Max_Acceleration, Max_Velocity;
+float Max_Acceleration, Max_Dumper, Max_Velocity;
 
 float speedMultiplier;
 
@@ -19,18 +19,22 @@ float radius = 10;
 
 void setup() {
   size(800, 600);
-
+  
+  strokeWeight(1);
+  stroke(0, 70, 120);
+  
   // Create a boids world
   Boids = new Boids();
 
   // Max acceleration and speed
   Max_Acceleration = 5.0f;
+  Max_Dumper = 3.0f;
   Max_Velocity = 3.0f;
 
   // Magnitudes
-  Magnitude_Cohesion = .5f;
-  Magnitude_Separation = 4f;
-  Magnitude_Alignment = 4f;
+  Magnitude_Cohesion = .1f;
+  Magnitude_Separation = 1f;
+  Magnitude_Alignment = 1f;
 
   // Range
   Range_Cohesion = 40;
@@ -46,7 +50,7 @@ void setup() {
 }
 
 void draw() {
-  background(50);
+  background(255);
 
   Boids.update();
 }
@@ -74,7 +78,7 @@ void createGUI() {
   Slider sliderMagAli = jControl.addSlider("Magnitude_Alignment", 0, 10, 4, 320, 70, 200, 20);
   
   Slider sliderMaxA = jControl.addSlider("Max_Acceleration", 0, 10, 5, 10, 120, 200, 20);
-  Slider sliderMaxV = jControl.addSlider("Max_Velocity", 0, 10, 3, 10, 150, 200, 20);
+  Slider sliderMaxV = jControl.addSlider("Max_Velocity", 0, 50, 10, 10, 150, 200, 20);
   
 }
 
@@ -103,6 +107,7 @@ class Boids {
 class Boid {
 
   PVector pos, a, v, coh, sep, ali;
+  float damp = 0.45;
 
   Boid () {  
     // randomize position
@@ -134,8 +139,9 @@ class Boid {
     // clamp accelerations
     a.set(clampV(a.x, Max_Acceleration), clampV(a.y, Max_Acceleration));
     
+    
     // get vectors
-    v = PVector.add(a, v);
+    v = PVector.mult(PVector.add(a, v), damp);
     // clamp velocity
     v.set(clampV(v.x, Max_Velocity), clampV(v.y, Max_Velocity));
 
@@ -149,6 +155,7 @@ class Boid {
       );
 
     // draw a boid
+    fill(39, 206, 195);
     ellipse(pos.x, pos.y, radius, radius);
   }
 
@@ -202,7 +209,7 @@ class Boid {
       return r;
     }
 
-    // find the center position of this boid’s neighbors,
+    // find the center position of this boid’s neighbors
     for (Boid other : neighbors) {
       r = PVector.add(r, other.pos);
     }
